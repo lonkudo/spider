@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+output.txt
+buffer.txt
+card.txt
+temp.txt
+handlePhone/
+statistics/

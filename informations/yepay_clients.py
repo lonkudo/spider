@@ -1,0 +1,36 @@
+check_clients = [
+    {'target': 50, 'num': '9883', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '8704', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '6634', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '0958', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '5112', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '2565', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '6386', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+    {'target': 50, 'num': '2197', 'option': True, 'success': False, 'records': [], 'business_name': 'hdf','cleared': False},
+]
+
+
+clients = [
+# {'target': 20, 'num': '0832', 'name': 'ALL_NT6_1860483638172512_+7', 'option': True, 'cleared': False, 'spending_limit': 219.41, 'id': '1860483638172512', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '4714', 'name': 'ALL_NT2_824420523551719_+7', 'option': True, 'cleared': False, 'spending_limit': 1014.58, 'id': '824420523551719', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 20, 'num': '7465', 'name': 'ALL_IL2_1550963486195004_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1550963486195004', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '5579', 'name': 'ALL_IL1_1386691932835759_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1386691932835759', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '8427', 'name': 'ALL_OL2_1637465567624430_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1637465567624430', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '7988', 'name': 'ALL_BP1_1534000184558132_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1534000184558132', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '9765', 'name': 'ALL_BP2_756738897448290_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '756738897448290', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '8506', 'name': 'ALL_OL1_902298178897708_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '902298178897708', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '1593', 'name': 'ALL_NT3_607892639080942_+7', 'option': True, 'cleared': False, 'spending_limit': 1180.88, 'id': '607892639080942', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '7100', 'name': 'ALL_PK1_1198602535026696_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1198602535026696', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '3380', 'name': 'ALL_PK2_1394456728999070_+7', 'option': True, 'cleared': False, 'spending_limit': 86.95, 'id': '1394456728999070', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '7757', 'name': 'BIG_KY2_841331798330458_+7', 'option': True, 'cleared': False,  'id': '841331798330458', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '4457', 'name': 'BIG_KY1_2299318063842854_+7', 'option': True, 'cleared': False,  'id': '2299318063842854', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '9349', 'name': 'DONG_NT7_1872742280006230_+7', 'option': True, 'cleared': False, 'spending_limit': 1891.85, 'id': '1872742280006230', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '4254', 'name': 'ISSUE_Lost9_1037672431818538_+8', 'option': True, 'cleared': False, 'spending_limit': 1171.57, 'id': '1037672431818538', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '0787', 'name': 'AHX_HB2_1939673220128344_+8', 'option': True, 'cleared': False,  'id': '1939673220128344', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '0731', 'name': 'AHX_NT9_1524936862083966_+8', 'option': True, 'cleared': False, 'spending_limit': 401.03, 'id': '1524936862083966', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '1428', 'name': 'AHX_LA1_1221561013412370_+8', 'option': True, 'cleared': False, 'spending_limit': 660.04, 'id': '1221561013412370', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '8957', 'name': 'AHX_LA8_1153349779845407_+8', 'option': True, 'cleared': False, 'spending_limit': 73.18, 'id': '1153349779845407', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '5057', 'name': 'AHX_LA7_1174162521357165_+8', 'option': True, 'cleared': False, 'spending_limit': 73.17, 'id': '1174162521357165', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '0073', 'name': 'AHX_LA6_814295434544670_+8', 'option': True, 'cleared': False, 'spending_limit': 395.53, 'id': '814295434544670', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+# {'target': 1, 'num': '0795', 'name': 'AHX_LA5_1128861109232798_+8', 'option': True, 'cleared': False, 'spending_limit': 48.62, 'id': '1128861109232798', 'threshold': 2.0, 'success': False, 'records': [],'business_name':'ALL',} ,
+]

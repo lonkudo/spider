@@ -1,0 +1,39 @@
+[
+  {
+    "domain": ".msu.io",
+    "expirationDate": 1748431002.921142,
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "__cf_bm",
+    "path": "/",
+    "sameSite": "no_restriction",
+    "secure": true,
+    "session": false,
+    "storeId": "0",
+    "value": "S_rOv0WI3BKD46SoWrGXb5kc1m.wQwuUmiMUH62aHU0-1748429203-1.0.1.1-FZsn0OENa9Y1A3XOevzXLdCWq_sNCtEMi_P6TKCi.nuW1XcgDCwkXvLPGIbIq0lRfgs9gcXCS8sGRfRMevoZLWALrqUt9nrqlzmxWsoD4RY"
+  },
+  {
+    "domain": ".msu.io",
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "msu_wat",
+    "path": "/",
+    "sameSite": "lax",
+    "secure": true,
+    "session": true,
+    "storeId": "0",
+    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg0MzAzMzQuMTE4NjAzLCJqdGkiOiIyMTdmNzBkMy0yOWRkLTQwYzYtOWZjZS04NmExYmVmOWQxOGEiLCJpYXQiOjE3NDg0Mjk0MzQuMTE4NjAzLCJpc3MiOiJORVhQQUNFIiwiYWRkcmVzcyI6IjB4NDI5NGVkMDk1ZTM5NWMyMjhmMDREMzlGOEE3NGJFOWJBRTMyQUE1MSIsIm5pY2tuYW1lIjoid3Vrb25nIzQzNTQiLCJzZXNzaW9uS2V5IjoiMjE3ZjcwZDMtMjlkZC00MGM2LTlmY2UtODZhMWJlZjlkMThhIn0.VyhkP6SXoPasYRNGH2dbWWK74F-q8uGFRXsJxzqjmOk"
+  },
+  {
+    "domain": ".msu.io",
+    "hostOnly": false,
+    "httpOnly": true,
+    "name": "msu_wrt",
+    "path": "/",
+    "sameSite": "lax",
+    "secure": true,
+    "session": true,
+    "storeId": "0",
+    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDg0NDAyMzQuMTE4NjAzLCJqdGkiOiIyMTdmNzBkMy0yOWRkLTQwYzYtOWZjZS04NmExYmVmOWQxOGEiLCJpYXQiOjE3NDg0Mjk0MzQuMTE4NjAzLCJpc3MiOiJORVhQQUNFIiwiYWRkcmVzcyI6IjB4NDI5NGVkMDk1ZTM5NWMyMjhmMDREMzlGOEE3NGJFOWJBRTMyQUE1MSIsIm5pY2tuYW1lIjoid3Vrb25nIzQzNTQiLCJzZXNzaW9uS2V5IjoiMjE3ZjcwZDMtMjlkZC00MGM2LTlmY2UtODZhMWJlZjlkMThhIn0.4XdOFbak8b_CZ262YGCRjd0jljoT6s-_5yEbZ5fXr3A"
+  }
+]
