@@ -53,7 +53,7 @@ def initDriver(gui):
         }
     )
 
-    driver.set_window_position(3000, 0)
+    driver.set_window_position(0, 0)
     driver.set_window_size(2500, 3000)
     actions = ActionChains(driver)
 

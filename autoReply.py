@@ -8,7 +8,7 @@ class AutoReply:
     app = None
     win = None
     def __init__(self):
-        Application(backend="uia").start(r"C:\Users\ASUS\AppData\Roaming\Telegram Desktop\Telegram.exe")
+        Application(backend="uia").start(r"D:\telegram\Telegram Desktop\Telegram.exe")
         self.app = Application(backend="uia").connect(path="Telegram.exe")
 
         self.win = self.app.top_window()

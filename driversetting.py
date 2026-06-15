@@ -24,7 +24,6 @@ def initDriver(gui):
     options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/142.0.7444.134 Safari/537.36"
     )
 
     options.add_argument("--force-device-scale-factor=0.8")
@@ -32,7 +31,7 @@ def initDriver(gui):
     # ✅ 核心修复：uc 自带防检测，不要手动执行 execute_cdp_cmd
     driver = uc.Chrome(
         options=options,
-        version_main=False,  # 自动匹配Chrome版本
+        version_main=148,  # 自动匹配Chrome版本
         suppress_welcome_page=True  # 禁止欢迎页，防止窗口崩溃
     )
 

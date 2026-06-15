@@ -38,8 +38,10 @@ cookie_file = "fb.json"
 # service = Service(executable_path=chromedriver_path)
 
 
-rows_xpath = "/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div/div[3]/div"
-header_rows_xpath = "/html/body/div[1]/div/div/div/div[1]/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div/div[2]/div[2]/div/div"
+no_rows_xpath = "//div[contains(text(),'No data') or contains(text(),'in the future')]"
+rows_xpath = "/html/body/div[1]/div/div/div/div[1]/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/span/div/div"
+
+header_rows_xpath = "/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[2]/div[2]/div/div"
 # rows_xpath = "/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/div"
 # rows_xpath = "/html/body/div[1]/div/div/div/div[1]/div/span/div/div[1]/div/div[2]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/div"
 
@@ -132,31 +134,36 @@ def goWithCookie(url,cookie_file):
 
 
 def getReportHeader():
-    time.sleep(3)
+    time.sleep(1)
     headers = ['Account Name']
     header_rows = findElementsByXPath(driver,header_rows_xpath)
+    printElement(header_rows)
     for header_row in header_rows:
         try:
-            text_div = header_row.find_element(By.XPATH,".//div[2]/div/div/div/div[2]/div/div/div/div/div/div[2]/div/div[1]/div/span/div/div/div")
+            text_div = header_row.find_element(By.XPATH,".//div[normalize-space(text()) != '']")
             headers.append(text_div.text)
         except Exception:
             pass
+
 
     headers.append("memo")
     headers.append("date")
     headers.append("report_id")
 
+
     return headers
+
+
 
 def reportOneDay(day_range,report_id,header):
     """ get report of one day, from day_range"""
 
-    time.sleep(3)
     day = get_start_day_from_time_range(day_range)
     reports = []
-    rows = findElementsByXPath(driver,rows_xpath)
-    # rows = findElementsByXPath(driver,"/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/span/div")
-    if not rows: return None
+    time.sleep(5)
+    element, isFound = waitForResult_sync(driver,succ_xpath=rows_xpath,fail_xpath=no_rows_xpath)
+    print(day_range," ", isFound)
+    if not isFound: return None
 
     rows = findElementsByXPath(driver,rows_xpath)
 
@@ -164,25 +171,26 @@ def reportOneDay(day_range,report_id,header):
         row = rows[0]
 
         try:
-            name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
+            name_cell = row.find_element(By.XPATH,"./div[1]/div[1]/div[1]")
         except:
             print('empty')
             return None
 
     for row in rows:
         msg = []
-        name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
+        name_cell = row.find_element(By.XPATH,"./div[1]/div[1]/div[1]")
         if not name_cell.text =='': msg.append(name_cell.text)
 
-        other_cells = row.find_elements(By.XPATH,"./div/div/div[2]/div/div")
+        other_cells = row.find_elements(By.XPATH,"./div[1]/div[2]/div[1]/span")
         # other_cells = row.find_elements(By.XPATH,"./div/div/div[2]/div/span")
         for column_cell in other_cells:
             msg.append(parse_safe_number(column_cell.text))
         msg.append(day)
         reports.append(msg)
         # if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div/div/div[2]/div/span").text
-        if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div/div/div[2]/div/div").text
+        if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div[1]/div[2]/div[1]/span").text
         msg.append(report_id)
+
 
     new_report = []
     for item in reports:
@@ -237,6 +245,7 @@ def handleDayToDayReports(reports,range = "all"):
     # printElement(flat_table)
     # if accounts in bm fit in row in flat_table then it matched
     rearrange_bms = filterRearrangeBms('dayTodayReport')
+
 
     for bm_ins in rearrange_bms:
         table = []
@@ -327,15 +336,12 @@ def walkAccountsInSettings():
 
 
 login()
+# getDayToDayReports(range='all')
 getDayToDayReports(range=2)
-
+#
 # reports = [
-# [{'Account Name': 'ALL_BP2_756738897448290_+7', 'Reach': 14566, 'Impressions': 22672, 'Frequency': 1.56, 'Amount spent': 307.76, 'Account ID': '756738897448290', 'memo': '', 'date': '2026-02-12', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_OL2_1637465567624430_+7', 'Reach': 11375, 'Impressions': 14221, 'Frequency': 1.25, 'Amount spent': 174.83, 'Account ID': '1637465567624430', 'memo': '', 'date': '2026-02-12', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL2_1550963486195004_+7', 'Reach': 15426, 'Impressions': 21781, 'Frequency': 1.41, 'Amount spent': 969.85, 'Account ID': '1550963486195004', 'memo': '', 'date': '2026-02-12', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_BP1_1534000184558132_+7', 'Reach': 18544, 'Impressions': 22277, 'Frequency': 1.2, 'Amount spent': 456.71, 'Account ID': '1534000184558132', 'memo': '', 'date': '2026-02-12', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL1_1386691932835759_+7', 'Reach': 17548, 'Impressions': 21340, 'Frequency': 1.22, 'Amount spent': 449.12, 'Account ID': '1386691932835759', 'memo': '', 'date': '2026-02-12', 'report_id': '1593655391872771'}] ,
-# [{'Account Name': 'ALL_BP2_756738897448290_+7', 'Reach': 14068, 'Impressions': 21186, 'Frequency': 1.51, 'Amount spent': 230.47, 'Account ID': '756738897448290', 'memo': '', 'date': '2026-02-13', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_OL2_1637465567624430_+7', 'Reach': 14119, 'Impressions': 19244, 'Frequency': 1.36, 'Amount spent': 281.05, 'Account ID': '1637465567624430', 'memo': '', 'date': '2026-02-13', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL2_1550963486195004_+7', 'Reach': 14459, 'Impressions': 19432, 'Frequency': 1.34, 'Amount spent': 740.43, 'Account ID': '1550963486195004', 'memo': '', 'date': '2026-02-13', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_BP1_1534000184558132_+7', 'Reach': 21339, 'Impressions': 25602, 'Frequency': 1.2, 'Amount spent': 409.22, 'Account ID': '1534000184558132', 'memo': '', 'date': '2026-02-13', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL1_1386691932835759_+7', 'Reach': 15853, 'Impressions': 21582, 'Frequency': 1.36, 'Amount spent': 220.6, 'Account ID': '1386691932835759', 'memo': '', 'date': '2026-02-13', 'report_id': '1593655391872771'}] ,
-# [{'Account Name': 'ALL_BP2_756738897448290_+7', 'Reach': 8462, 'Impressions': 12639, 'Frequency': 1.49, 'Amount spent': 165.19, 'Account ID': '756738897448290', 'memo': '', 'date': '2026-02-14', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_OL2_1637465567624430_+7', 'Reach': 9141, 'Impressions': 12699, 'Frequency': 1.39, 'Amount spent': 203.33, 'Account ID': '1637465567624430', 'memo': '', 'date': '2026-02-14', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL2_1550963486195004_+7', 'Reach': 9990, 'Impressions': 13567, 'Frequency': 1.36, 'Amount spent': 673.24, 'Account ID': '1550963486195004', 'memo': '', 'date': '2026-02-14', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_BP1_1534000184558132_+7', 'Reach': 15104, 'Impressions': 19482, 'Frequency': 1.29, 'Amount spent': 440.0, 'Account ID': '1534000184558132', 'memo': '', 'date': '2026-02-14', 'report_id': '1593655391872771'}, {'Account Name': 'ALL_IL1_1386691932835759_+7', 'Reach': 7430, 'Impressions': 11452, 'Frequency': 1.54, 'Amount spent': 138.39, 'Account ID': '1386691932835759', 'memo': '', 'date': '2026-02-14', 'report_id': '1593655391872771'}] ,
-# [{'Account Name': 'ALL_NT6_1860483638172512_+7', 'Reach': 8428, 'Impressions': 10815, 'Frequency': 1.28, 'Link clicks': 727, 'CPC (cost per link click)': 0.33, 'Registrations completed': 62, 'Cost per registration completed': 3.82, 'Purchases': 20, 'Cost per purchase': 11.84, 'Account ID': '1860483638172512', 'Amount spent': 236.84, 'memo': '', 'date': '2026-02-12', 'report_id': '1300781112092231'}, {'Account Name': 'ALL_NT2_824420523551719_+7', 'Reach': 15892, 'Impressions': 19711, 'Frequency': 1.24, 'Link clicks': 712, 'CPC (cost per link click)': 0.33, 'Registrations completed': 135, 'Cost per registration completed': 1.75, 'Purchases': 18, 'Cost per purchase': 13.13, 'Account ID': '824420523551719', 'Amount spent': 236.29, 'memo': '', 'date': '2026-02-12', 'report_id': '1300781112092231'}] ,
-# [{'Account Name': 'ALL_NT2_824420523551719_+7', 'Reach': 19706, 'Impressions': 24781, 'Frequency': 1.26, 'Link clicks': 854, 'CPC (cost per link click)': 0.32, 'Registrations completed': 181, 'Cost per registration completed': 1.5, 'Purchases': 25, 'Cost per purchase': 10.88, 'Account ID': '824420523551719', 'Amount spent': 271.97, 'memo': '', 'date': '2026-02-13', 'report_id': '1300781112092231'}, {'Account Name': 'ALL_NT6_1860483638172512_+7', 'Reach': 7704, 'Impressions': 9732, 'Frequency': 1.26, 'Link clicks': 568, 'CPC (cost per link click)': 0.4, 'Registrations completed': 51, 'Cost per registration completed': 4.4, 'Purchases': 22, 'Cost per purchase': 10.21, 'Account ID': '1860483638172512', 'Amount spent': 224.65, 'memo': '', 'date': '2026-02-13', 'report_id': '1300781112092231'}] ,
-# [{'Account Name': 'ALL_NT2_824420523551719_+7', 'Reach': 18162, 'Impressions': 24100, 'Frequency': 1.33, 'Link clicks': 668, 'CPC (cost per link click)': 0.37, 'Registrations completed': 135, 'Cost per registration completed': 1.85, 'Purchases': 16, 'Cost per purchase': 15.65, 'Account ID': '824420523551719', 'Amount spent': 250.32, 'memo': '', 'date': '2026-02-14', 'report_id': '1300781112092231'}, {'Account Name': 'ALL_NT6_1860483638172512_+7', 'Reach': 5624, 'Impressions': 7520, 'Frequency': 1.34, 'Link clicks': 598, 'CPC (cost per link click)': 0.3, 'Registrations completed': 45, 'Cost per registration completed': 3.96, 'Purchases': 14, 'Cost per purchase': 12.72, 'Account ID': '1860483638172512', 'Amount spent': 178.12, 'memo': '', 'date': '2026-02-14', 'report_id': '1300781112092231'}] ,
+# [{'Account Name': 'BIG_OL1_902298178897708_+7', 'Reach': 3186, 'Impressions': 3299, 'Frequency': 1.04, 'Link clicks': 102, 'CPC (cost per link click)': 0.31, 'Registrations completed': 1, 'Cost per registration completed': 31.19, 'Purchases': '—', 'Cost per purchase': '—', 'Account ID': '902298178897708', 'Amount spent': 31.19, 'memo': '', 'date': '2026-05-30', 'report_id': '1593655391872771'}] ,
+# [{'Account Name': 'BIG_OL1_902298178897708_+7', 'Reach': 8361, 'Impressions': 10526, 'Frequency': 1.26, 'Link clicks': 575, 'CPC (cost per link click)': 0.32, 'Registrations completed': 21, 'Cost per registration completed': 8.73, 'Purchases': '—', 'Cost per purchase': '—', 'Account ID': '902298178897708', 'Amount spent': 183.33, 'memo': '', 'date': '2026-05-31', 'report_id': '1593655391872771'}] ,
 # ]
-# handleDayToDayReports(reports,2)
+# handleDayToDayReports(reports,'all')
 print('all done')

@@ -85,6 +85,7 @@ def get_end_date():
         return datetime.today().date()
 
 def writeReport(report, bm_ins):
+    print(report)
 
     concated_report = concatSummaryTable(report,bm_ins['business_name'])
     headers = summary_headers + summary_concat_headers
@@ -1099,6 +1100,7 @@ def concatCharges(charges, report, bm_ins ,account):
 
         # 如果report 里面找到了 符合条件的记录 把这个记录添加charge
         for item in report:
+            print(item)
             if (
                 item['date'] == charge['date']
                 and item['Account Name'] == account['name']
@@ -1191,6 +1193,8 @@ def updateIt(report, bm_ins):
 
     data = retrieve_previous_data(bm_ins)
     report.extend(data)
+
+    print(report)
 
     for account in bm_ins['accounts']:
         charges = getCharge(account)
@@ -1526,6 +1530,15 @@ def make_summary_from_summary(group, label):
 
 
 
+import os
+import pandas as pd
+from datetime import datetime, date
+
+# 请确保你的环境中已定义 genHash 函数，此处保留原逻辑
+def genHash(data):
+    # 你的哈希生成逻辑
+    return hash(str(data))
+
 def retrieve_previous_data(bm_ins):
     """
     Read Excel file {business_name}.xlsx and return rows where
@@ -1534,31 +1547,47 @@ def retrieve_previous_data(bm_ins):
     'Account Name': col1, 'Account ID': col2, 'date': col3,
     'Amount spent': col4, 'cash': col5, 'cash_count': col6,
     'deposit': col7, 'deposit_count': col8
+    If the file does not exist / read fails / no valid data, return empty list.
     """
     output_folder = "statistics"
     filename = f"{bm_ins['business_name']}.xlsx"
     file_path = os.path.join(output_folder, filename)
-    df = pd.read_excel(file_path, header=None)  # Assuming no header in your Excel
 
+    # 1. 核心修改：文件不存在直接返回空数据
+    if not os.path.exists(file_path):
+        return []
+
+    # 2. 异常捕获：文件读取失败（损坏/格式错误）也返回空数据
+    try:
+        df = pd.read_excel(file_path, header=None)
+    except Exception as e:
+        print(f"文件读取失败: {e}")
+        return []
+
+    # 去除全空行
     df = df.dropna(how='all')
 
-    # Map columns to your keys
+    # 无有效数据时返回空
+    if df.empty:
+        return []
+
+    # 映射列名（与原逻辑完全一致）
     df.columns = ['Account Name', 'Account ID', 'date',
                   'Amount spent', 'cash', 'cash_count',
                   'deposit', 'deposit_count','total','remaining','bm_deposit']
 
-    # Filter rows where date is neither '最新' nor '截止昨日'
+    # 过滤不符合条件的行
     origin_data = df[~df['date'].isin(['最新', '截止昨日','所有账户','日期'])]
 
+    # 转换为字典列表
     datas = origin_data.to_dict(orient='records')
 
-
+    # 补充 time 和 hash 字段（原逻辑保留）
     for data in datas:
         data['time'] = datetime.combine(date.today(), datetime.min.time())
         data['hash'] = genHash(data)
 
-
-    # Convert to list of dicts
+    # 返回最终数据（无符合条件数据时自动返回空列表）
     return datas
 
 

@@ -41,9 +41,7 @@ ads_url = "https://adsmanager.facebook.com"
 cookie_file = "fb.json"
 # cookie_file = "fb_Toan.json"
 # service = Service(executable_path=chromedriver_path)
-
-
-rows_xpath = "/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div/div[3]/div"
+rows_xpath = "/html/body/div[1]/div/div/div/div[1]/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/span/div/div"
 # rows_xpath = "/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/div"
 # rows_xpath = "/html/body/div[1]/div/div/div/div[1]/div/span/div/div[1]/div/div[2]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/div"
 
@@ -324,27 +322,29 @@ def payBms():
 def report(report_id):
     reports = []
     rows = findElementsByXPath(driver,rows_xpath)
+
     if not rows: return None
     time.sleep(2)
     rows = findElementsByXPath(driver,rows_xpath)
 
     if len(rows)== 1:
         row = rows[0]
+        printElement(row)
         try:
-            name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
+            name_cell = row.find_element(By.XPATH,"./div[1]/div[1]/div[1]")
         except:
             print('empty')
             return None
 
     for row in rows:
         msg = []
-        name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
+        name_cell = row.find_element(By.XPATH,"./div[1]/div[1]/div[1]")
         if not name_cell.text =='': msg.append(name_cell.text)
-        other_cells = row.find_elements(By.XPATH,"./div/div/div[2]/div/div")
+        other_cells = row.find_elements(By.XPATH,"./div[1]/div[2]/div[1]/span")
         for column_cell in other_cells:
             msg.append(parse_safe_number(column_cell.text))
         reports.append(msg)
-        if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div/div/div[2]/div/div").text
+        if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div[1]/div[2]/div[1]/span").text
         msg.append(report_id)
 
     return reports
@@ -357,31 +357,64 @@ def reportEveryday(day_range,report_id):
     if not rows: return None
     time.sleep(2)
 
-    rows = findElementsByXPath(driver,rows_xpath)
+    if not rows: return None
+    time.sleep(2)
+    rows = findElementsByXPath(driver, rows_xpath)
 
-
-    if len(rows)== 1:
+    if len(rows) == 1:
         row = rows[0]
-
+        printElement(row)
         try:
-            name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
+            name_cell = row.find_element(By.XPATH, "./div[1]/div[1]/div[1]")
         except:
             print('empty')
             return None
 
     for row in rows:
         msg = []
-        name_cell = row.find_element(By.XPATH,"./div/div/div[1]/div")
-        if not name_cell.text =='': msg.append(name_cell.text)
+        name_cell = row.find_element(By.XPATH, "./div[1]/div[1]/div[1]")
+        if not name_cell.text == '': msg.append(name_cell.text)
+        other_cells = row.find_elements(By.XPATH, "./div[1]/div[2]/div[1]/span")
+        for column_cell in other_cells:
+            msg.append(parse_safe_number(column_cell.text))
+        reports.append(msg)
+        if name_cell.text == '': msg[0] = row.find_element(By.XPATH, "./div[1]/div[2]/div[1]/span").text
+        msg.append(report_id)
 
-        other_cells = row.find_elements(By.XPATH,"./div/div/div[2]/div/div")
+    return reports
+
+
+def reportEveryday(day_range, report_id):
+    day = get_start_day_from_time_range(day_range)
+    reports = []
+    time.sleep(2)
+    rows = findElementsByXPath(driver, rows_xpath)
+    # rows = findElementsByXPath(driver,"/html/body/div[1]/div/div/div/div/div/span/div/div[1]/div[3]/div/div[2]/span/div/div/div/div/div[3]/div[1]/div[2]/div/div/div/div/div[1]/div[3]/span/div/div/div/div/div/div/div[1]/div[3]/span/div")
+    if not rows: return None
+    rows = findElementsByXPath(driver, rows_xpath)
+
+    if len(rows) == 1:
+        row = rows[0]
+
+        try:
+            name_cell = row.find_element(By.XPATH, "./div/div/div[1]/div")
+        except:
+            print('empty')
+            return None
+
+    for row in rows:
+        msg = []
+        name_cell = row.find_element(By.XPATH, "./div/div/div[1]/div")
+        if not name_cell.text == '': msg.append(name_cell.text)
+
+        other_cells = row.find_elements(By.XPATH, "./div/div/div[2]/div/div")
         # other_cells = row.find_elements(By.XPATH,"./div/div/div[2]/div/span")
         for column_cell in other_cells:
             msg.append(parse_safe_number(column_cell.text))
         msg.append(day)
         reports.append(msg)
         # if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div/div/div[2]/div/span").text
-        if name_cell.text =='': msg[0] = row.find_element(By.XPATH,"./div/div/div[2]/div/div").text
+        if name_cell.text == '': msg[0] = row.find_element(By.XPATH, "./div/div/div[2]/div/div").text
         msg.append(report_id)
 
     printElement(reports)
@@ -468,6 +501,7 @@ def getYesterdayReports():
     return bm_reports
 
 def handleReports(reports):
+    print(reports)
     flat_table = [row for sublist in reports for row in sublist]
     # flat_table  的数据是 页面的数据
 
@@ -476,13 +510,18 @@ def handleReports(reports):
         table = []
         table_name = bm_ins['business_name']
         for account in bm_ins['accounts']:
+            print("--1--", account)
             match_flag = False # 对于 fb_report 还没有数据的处理 自己给一个值
 
+            print("--2--", flat_table)
             for row in flat_table:  # 对于fb_report 有数据的账户的处理
+                print(row[-1],bm_ins['reports'])
                 if account['id'] == row[10] and row[-1] in bm_ins['reports']: # row[10] id row[-1] report_id
                     match_flag = True
                     row.pop(-1)
                     table.append(row)
+
+            print("--3--", match_flag)
 
             if not match_flag: # 对于 fb_report 还没有数据的处理 自己给一个值
                 row = [account['name'],'-','-','-','-','-','-','-','-','-',account['id'],'-',None]
@@ -792,10 +831,14 @@ def getEveryDayReports():
     bms = filterScriptBms('everydayReport')
 
     bm_reports = []
+    print('getEveryDayReports', bms)
 
     for bm_ins in bms:
+        print(bm_ins)
         for bm_report in bm_ins['reports']:
             range_list = get_everyday_range(bm_report['start'],bm_report['end'])
+            print(range_list)
+
             for day_range in range_list:
                 print(bm_ins['business_name'],bm_report['id'],day_range)
                 goReport(bm_ins['business_id'],bm_report['id'],day_range)
@@ -1055,7 +1098,7 @@ login()
 # # # # go_card_spider()
 # collectInfo()
 # # # # payBms()
-getAllReports()
+# getAllReports()
 # # getYesterdayReports()
 
 # getEveryDayReports()
@@ -1071,18 +1114,8 @@ getAllReports()
 # save_card_info()
 
 # greenAds()
-# reports= [
-# [['ALL_IL1_1386691932835759_+7', 48578, 58903, 1.21, 1084, 0.74, 120, 6.67, 20, 40.03, '1386691932835759', 800.69, '', '1586518262475548']] ,
-# [['ALL_OL2_1637465567624430_+7', 30256, 35785, 1.18, 854, 0.68, 90, 6.46, 15, 38.79, '1637465567624430', 581.83, '', '1568314657740178'], ['ALL_OL1_902298178897708_+7', 463, 463, 1.0, 9, 0.9, '—', '—', '—', '—', '902298178897708', 8.12, '', '1568314657740178']] ,
-# [['AHX_NT9_1524936862083966_+8', 80368, 145572, 1.81, 4055, 0.08, 29, 11.53, 13, 25.71, '1524936862083966', 334.25, '', '1296351442535198']] ,
-# [['ALL_NT2_824420523551719_+7', 1281885, 2555222, 1.99, 33801, 0.72, 7627, 3.2, 1472, 16.58, '824420523551719', 24398.94, '', '1300781112092231'], ['ALL_NT3_607892639080942_+7', 5350, 6078, 1.14, 357, 0.62, 42, 5.29, 6, 37.05, '607892639080942', 222.3, '', '1300781112092231']] ,
-# [['DONG_NT7_1872742280006230_+7', 47640, 253046, 5.31, 3107, 0.25, 13, 60.92, 5, 158.39, '1872742280006230', 791.94, '', '1300831638753845'], ['DONG_NT6_1860483638172512_+7', 36502, 147415, 4.04, 1395, 0.32, 7, 64.31, 1, 450.18, '1860483638172512', 450.18, '', '1300831638753845']] ,
-# [['AHX_LA7_1174162521357165_+8-XIGUA', 120206, 167772, 1.4, 2310, 1.56, 404, 8.92, 248, 14.53, '1174162521357165', 3603.9, '', '1832442804100250'], ['AHX_LA8_1153349779845407_+8-LT', 106041, 149323, 1.41, 1280, 2.12, 151, 17.95, 182, 14.89, '1153349779845407', 2710.33, '', '1832442804100250'], ['AHX_LA5_1128861109232798_+8', 32795, 45445, 1.39, 442, 1.52, 58, 11.55, 24, 27.92, '1128861109232798', 670.08, '', '1832442804100250'], ['AHX_LA6_814295434544670_+8', 681, 702, 1.03, 17, 0.2, '—', '—', '—', '—', '814295434544670', 3.33, '', '1832442804100250']] ,
-# [['AHX_LA1_1221561013412370_+8', 219619, 367913, 1.68, 7410, 0.72, 385, 13.82, 578, 9.21, '1221561013412370', 5322.01, '', '1842210649790132']] ,
-# [['AHX_HB2_1939673220128344_+8', 45791, 70929, 1.55, 2401, 0.16, 29, 13.48, 13, 30.07, '1939673220128344', 390.96, '', '862711166445852']] ,
-# [['BIG_KY2_841331798330458_+7', 718031, 1499879, 2.09, 65283, 0.35, 11050, 2.08, 2055, 11.16, '841331798330458', 22932.58, '', '814300457981875'], ['BIG_KY1_2299318063842854_+7', 274618, 662065, 2.41, 40287, 0.52, 11242, 1.85, 2618, 7.94, '2299318063842854', 20777.28, '', '814300457981875']] ,
-# [['ALL_A5_661889550207704_+7', 2595825, 6379353, 2.46, 165855, 0.35, 22127, 2.63, 3071, 18.98, '661889550207704', 58274.95, '', '1859985771258382'], ['BIG_C8_1256488806008345_+7', 3231976, 7546526, 2.33, 49483, 0.95, 7975, 5.89, 2061, 22.77, '1256488806008345', 46933.08, '', '1859985771258382'], ['ALL_C6_1407736730479167_+7', 1055852, 1440263, 1.36, 42870, 0.49, 5640, 3.7, 991, 21.05, '1407736730479167', 20864.92, '', '1859985771258382'], ['NINE_C9_1940730006332009_+7', 438107, 503901, 1.15, 1241, 2.85, '—', '—', 6, 589.21, '1940730006332009', 3535.26, '', '1859985771258382'], ['BIG_A6_735598362184116_+7', 1376, 1633, 1.19, 49, 0.38, 5, 3.68, 2, 9.21, '735598362184116', 18.41, '', '1859985771258382']] ,
-# [['ALL_NT1_1375132304189348_+7', 27433, 44842, 1.63, 2049, 0.48, 329, 3.01, 72, 13.74, '1375132304189348', 989.2, '', '25889777367286174']] ,
+# reports=[
+# [['BIG_OL1_902298178897708_+7', 8879, 10119, 1.14, 446, 0.31, 12, 11.44, '—', '—', '902298178897708', 137.27, '', '1593655391872771']] ,
 # ]
 # handleReports(reports)
 
