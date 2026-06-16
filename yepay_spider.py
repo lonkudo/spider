@@ -1093,9 +1093,9 @@ def readVerificationCodeFromPage():
 def getVerificationCode(num):
     goLogs()
     search(num)
-    printToTerminalAndBuffer(f"Card: {num}")
+    printToTerminalAndBuffer(f"Card: {num:04d}")
     verification_msg = readVerificationCodeFromPage()
-    pyperclip.copy(f"Card: {num}\n" + verification_msg)
+    pyperclip.copy(f"Card: {num:04d}\n" + verification_msg)
 
 def removeCard(num):
     goCards()
