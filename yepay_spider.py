@@ -115,7 +115,7 @@ def login_yepay():
         login()
         auth()
         isHome = isHomePage()
-        if isHome: showYepayBalance()
+        # if isHome: showYepayBalance()
     print('start\n')
 
 
@@ -124,18 +124,18 @@ def goIndex():
 
 def go(route):
     driver.get(route)
-    time.sleep(2)
+    time.sleep(1)
 
 def goCards():
     go(ye.routes)
-    time.sleep(5)
+    time.sleep(2)
     selectCardStatus("正常")
     clickSearch(ye.searchFormIndex)
-    time.sleep(2)
+    time.sleep(1)
 
 def goLogs():
     go(ye.logs)
-    time.sleep(2)
+    time.sleep(1)
 
 def isHomePage():
     ret = findElement(driver, yepay.page.home)
@@ -144,12 +144,13 @@ def isHomePage():
     return ret
 
 def showYepayBalance():
-    balance_xpath = '/html/body/div[1]/section/section/main/div[2]/div/div[1]/div/div/div[3]/div/div/p'
-    balance_ps = findElementsByXPath(driver, balance_xpath)
-    available = extractNumberInText(balance_ps[0].text)
-    allocated = extractNumberInText(balance_ps[1].text)
-    freezing = extractNumberInText(balance_ps[2].text)
-    #
+    balance_ps = findElementsByXPath(driver, '//div[@class="balance-info"]//p[@class="balance_text"]')
+    if not balance_ps or len(balance_ps) < 3:
+        print("WARNING: Could not find balance elements")
+        return
+    available = extractNumberInText(balance_ps[0].text)  # 账户余额
+    allocated = extractNumberInText(balance_ps[1].text)  # 卡内总余额
+    freezing = extractNumberInText(balance_ps[2].text)   # 已授权未结算
     print(f"balance: {available} + {allocated} = {(available+ allocated):.2f}")
     print(f"freeze:  {freezing}")
     Remainings.addRemainings([{"business_name": "卡台", "remaining": round((available+ allocated),2), "time": datetime.datetime.now()}])
@@ -173,10 +174,10 @@ def extractCard(text):
         return None
 
 def closeLoginNotice():
-    time.sleep(3)
+    time.sleep(1)
 
     interact = findElementByXPath(driver, '//span[contains(.,"前往充值")]')
-    if interact.is_enabled() and interact.is_displayed():
+    if interact and interact.is_enabled() and interact.is_displayed():
         return
 
     btn = findElementByXPath(driver, '//button[contains(.,"确定")]')
@@ -197,17 +198,17 @@ def login():
         inputElement(driver, ".el-input__inner[type='text']", yepay.account)
         inputElement(driver, ".el-input__inner[type='password']", yepay.password)
         clickElement(driver,"button")
-        time.sleep(5)
+        time.sleep(2)
     return isLogin
 
 def auth():
     isAuth = findElement(driver,yepay.page.auth)
     if isAuth:
-        time.sleep(3)
+        time.sleep(1)
         inputElement(driver, ".el-input__inner[type='text']", yepay.genKey())
         # inputElement(driver, ".el-input__inner[type='text']", yepay.genKey())
         clickElement(driver,"button")
-        time.sleep(3)
+        time.sleep(2)
 
 
 
@@ -227,13 +228,13 @@ def isEmpty():
     return element != False
 
 def clickSearch(index):
-    time.sleep(1)
+    time.sleep(0.5)
     forms = findElements(driver,"div.el-form-item__content")
-    time.sleep(1)
+    time.sleep(0.5)
 
     button = forms[index].find_element(By.CSS_SELECTOR,"button")
     button.click()
-    time.sleep(2)
+    time.sleep(0.5)
 
 def updateBalance():
     clickByTitle(driver,"更新余额",wait_time=10)
@@ -353,16 +354,16 @@ def handleCard(need_balance):
     else:
         menu_items[0].click()
     # 充值 提现 锁卡
-    time.sleep(1)
+    time.sleep(0.5)
 
 def handleKaduan():
     # 点击提现
     clickOperator(1)
-    time.sleep(1)
+    time.sleep(0.5)
     check()
     # 因为勾选以后会出现popover导致无法点击提交 所以点击其他位置让这个遮挡物消失
     actions.move_by_offset(50, 50).click().perform()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def clickClose():
     elements = findElement(driver,".el-icon.el-dialog__close")
@@ -381,7 +382,7 @@ def check():
     checkboxContainer = findElement(driver,"服务条款")
     label = checkboxContainer.find_element(By.CSS_SELECTOR,"label")
     label.click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def submitAmount(amount):
     # 充值或提现窗口 输入金额
@@ -435,7 +436,9 @@ def printCardBalance(info,ending="\n"):
     else:
         current_balance = 0
 
-    if current_balance == 1.0: # 如果当前卡余额为1，打印为0
+    if current_balance is None:
+        current_balance = 0
+    elif current_balance == 1.0: # 如果当前卡余额为1，打印为0
         current_balance = 0
 
     if name:
@@ -490,16 +493,16 @@ def declineHeader():
 def selectTradeStatus(status):
     forms = findElements(driver,"div.el-form-item__content")
     forms[2].click()
-    time.sleep(1)
+    time.sleep(0.5)
     li = findElementByXPath(driver,f'//li[@class="el-select-dropdown__item" and normalize-space(text())="{status}"]')
-    time.sleep(1)
+    time.sleep(0.5)
     li.click()
     scrollupDorpdown()
 
 def scrollupDorpdown():
     spans = findElementsByXPath(driver,'//span[@class="el-breadcrumb__inner" and @role="link"]')
     spans[-1].click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def declinePretask():
     declineHeader()
@@ -509,10 +512,10 @@ def declinePretask():
 def selectTradeTime(range):
     forms = findElements(driver,"div.el-form-item__content")
     forms[0].click()
-    time.sleep(1)
+    time.sleep(0.5)
     button = findElementByXPath(driver,f'//div[contains(@visible, "true")]//button[@class="el-picker-panel__shortcut" and normalize-space(text())="{range}"]')
     button.click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def readOneInfo(processInfo=void):
     # read one line of charge record
@@ -673,13 +676,13 @@ def allocate():
         fillNum(info)
 
 def retrive(ye):
-    time.sleep(1)
+    time.sleep(0.5)
     go(ye.routes)
     button = findElementByXPath(driver,"/html/body/div[1]/section/section/main/div[2]/div/div[1]/form/div[1]/div/button")
     button.click()
     confirm = findElementByXPath(driver,"//div/div/div[3]/button[2]")
     confirm.click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def deleteCard():
     go(ye.routes)
@@ -706,7 +709,7 @@ def lockCard():
         if isEmpty(): continue
         if checkStatus(wantedStatus="正常"):
             fillNum(info,'lock')
-            time.sleep(2)
+            time.sleep(1)
             handleLock()
 
         printToTerminalAndBuffer(info['num'],'done')
@@ -730,7 +733,7 @@ def handleDelete():
     clickDropdownItem(2)
     handleWarning("confirm")
     verifyDepositPwd()
-    time.sleep(5)
+    time.sleep(2)
 
 def clickOperator(index):
     cell = findElement(driver,ye.operatorCell)
@@ -745,7 +748,7 @@ def clickFirstOperator(index):
 def clickDropdownItem(index):
     menu_items = getDropdown()
     menu_items[index].click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def messageBoxClick(index):
     message_btns = findElement(driver, "div.el-message-box__btns")
@@ -757,12 +760,12 @@ def handleLock():
     clickDropdownItem(2)
     handleWarning("confirm")
     verifyDepositPwd()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def clickVerifyButton():
     button = findElementByXPath(driver,"//button[span[text()='验证']]")
     button.click()
-    time.sleep(1)
+    time.sleep(0.5)
 
 def verifyDepositPwd():
     inputByPlaceholder(driver,"请输入资金密码", ye.password)
@@ -777,7 +780,7 @@ def selectCardStatus(state):
 
     status_select = findElementByXPath(driver,'//div[preceding-sibling::label[contains(normalize-space(.), "卡状态")] and @class="el-form-item__content"]')
     status_select.click()
-    time.sleep(2)
+    time.sleep(0.5)
     selectDropdownItem(state)
 
 def selectDropdownItem(text):
@@ -804,14 +807,14 @@ def go_card_spider():
 def create_card():
     create_card_button = findElementByXPath(driver,'//button[span[text()="开卡"]]')
     create_card_button.click()
-    time.sleep(3)
+    time.sleep(1)
 
     # 等到title出来就可以输入
     dialog_title = findElementByXPath(driver,'//span[@class="el-dialog__title" and text()="开卡"]')
     inputByPlaceholder(driver,"开卡金额",10)
 
     # 选择卡段
-    time.sleep(2)
+    time.sleep(0.5)
     # kaduan_option = findElementByXPath(driver,'//div[label[span[text()="40041606*(广告-FB-美区)"]]]')
     kaduan_option = findElementByXPath(driver,'//label[span[text()="54493747*免跨境"]]')
     kaduan_option.click()
@@ -822,11 +825,11 @@ def create_card():
     ads_option.click()
 
 
-    time.sleep(2)
+    time.sleep(0.5)
 
 def close_create_card():
     dialogHandle("开卡","提交")
-    time.sleep(5)
+    time.sleep(2)
 
 
 def dialogHandle(title,option):
@@ -873,7 +876,7 @@ def get_card_info():
 
 def create_one_card():
     create_card()
-    time.sleep(3)
+    time.sleep(1)
 
 def get_one_card_info():
     open_card_info()
@@ -888,18 +891,18 @@ def input_memo(msg):
     textarea.clear()
     textarea.send_keys(msg)
 
-    time.sleep(1)
+    time.sleep(0.5)
 
 def save_card_info():
     save_button = findElementByXPath(driver,'//button[contains(.,"保存")]')
     save_button.click()
-    time.sleep(5)
+    time.sleep(2)
 
 
 def close_card_info():
     close_card_info_btn = findElementByXPath(driver,'//button[preceding-sibling::*[text()="卡片信息"]]')
     close_card_info_btn.click()
-    time.sleep(5)
+    time.sleep(2)
 
 
 def report_spider():
@@ -955,7 +958,7 @@ def readData():
 
     yepay_report(std_data)
 
-    time.sleep(200)
+    time.sleep(2)
 
 def splitPair(pairs):
     # input a pair like {'完成金额\n笔数': '406.8\n51'} {'跨境手续费 / 笔数': '0.00 / 0'}
@@ -1018,7 +1021,7 @@ def createOneCardAndGetInfo(msg):
     create_one_card()
     input_memo(msg)
     close_create_card()
-    time.sleep(10)
+    time.sleep(3)
     goCards()
     open_card_info()
     info = get_card_info()
@@ -1059,26 +1062,49 @@ def removeCardBalance(num):
 
 def readVerificationCodeFromPage():
 
-    rows_xpath = "/html/body/div[1]/section/section/main/div[2]/div/div/div[1]/div[1]/div[3]/div/div[1]/div/table/tbody/tr"
-    rows = findElementsByXPath(driver, rows_xpath)
-    time_xpath = ".//td[9]"
-    msg_xpath = ".//td[10]"
+    # Try multiple XPath patterns to find the table rows (Element-UI / Element-Plus class changes)
+    rows = False
+    xpath_candidates = [
+        "//table[contains(@class, \"el-table__body\")]/tbody/tr",
+        "//div[contains(@class, \"el-table__body-wrapper\")]//table/tbody/tr",
+        "//div[@class=\"el-scrollbar__view\"]//table/tbody/tr",
+        "/html/body/div[1]/section/section/main/div[2]/div/div/div[1]/div[1]/div[3]/div/div[1]/div/table/tbody/tr",
+    ]
+
+    for candidate in xpath_candidates:
+        rows = findElementsByXPath(driver, candidate, timeout=3)
+        if rows and rows is not False:
+            break
+
+    if not rows or rows is False:
+        msg = "No table rows found on page"
+        printToTerminalAndBuffer(msg)
+        return msg
+
+    # Column indices (0-indexed, from readLog() header):
+    # 流水号(0) 卡序列号(1) 卡号(2) 类型(3) 交易状态(4)
+    # 授权码(5) 交易金额(6) 货币类型(7) 交易时间(8) 商户信息(9)
+    # 商户金额(10) 商户币种(11) 商户国家(12) 描述信息(13)
+    time_idx, msg_idx = 8, 9  # td[9]=商户信息 contains "METAPAY*XXXX"
 
     verify_codes = []
 
     for row in rows:
-        time = row.find_element(By.XPATH, time_xpath).text
-        msg = row.find_element(By.XPATH, msg_xpath).text
-        match = re.match(r'METAPAY\*((\w|\d){4})', msg)
+        tds = row.find_elements(By.XPATH, "./td")
+        if len(tds) <= max(time_idx, msg_idx):
+            continue
+        time_text = tds[time_idx].text
+        msg_text = tds[msg_idx].text
+
+        match = re.match(r'METAPAY\*((\w|\d){4})', msg_text)
         if match:
             code = match.group(1)
-            verify_codes.append(f"Time: {time}, Code: {code}")
+            verify_codes.append(f"Time: {time_text}, Code: {code}")
 
-        match = re.match(r'FACEBK \*((\w|\d){4})', msg)
+        match = re.match(r'FACEBK \*((\w|\d){4})', msg_text)
         if match:
             code = match.group(1)
-            verify_codes.append(f"Time: {time}, Code: {code}")
-
+            verify_codes.append(f"Time: {time_text}, Code: {code}")
 
     verification_msg = ""
     if len(verify_codes) == 0:
@@ -1339,7 +1365,7 @@ def downloadLog():
     # click export button
     export_button = findElementByXPath(driver,'//button[span[text()="导出文件"]]')
     export_button.click()
-    time.sleep(10)
+    time.sleep(5)
     # click confirm button in dialog
 
 def readLog():
@@ -1620,10 +1646,11 @@ if __name__ == "__main__":
 
     copyBuffer()
     if to_chat:
-        pass
-        autoReply_instance = AutoReply()
-        autoReply_instance.giveHint()
-        # autoReply_instance.pasteToChat(chat_name)
+        try:
+            autoReply_instance = AutoReply()
+            autoReply_instance.giveHint()
+        except Exception as e:
+            print(f"AutoReply skipped: {e}")
 
     print('\nall done')
     if not l_debug:

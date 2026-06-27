@@ -1,6 +1,4 @@
-import simpleaudio as sa
+import winsound
 
 def pop_hint():
-    wave_obj = sa.WaveObject.from_wave_file("pop.wav")
-    play_obj = wave_obj.play()  # non-blocking
-    play_obj.wait_done()        # <- wait until finished
+    winsound.PlaySound("pop.wav", winsound.SND_FILENAME)

@@ -6,10 +6,10 @@ from .yepay_kaduans import kaduans
 class Page:
     login = "忘记密码?"
     auth = "安全验证"
-    home = "账户概览"
+    home = "首页"
 
 class Routes:
-    base_url = "https://qlobalyepay.com/#/"
+    base_url = "https://ye-pay.com/#/"
     cards = base_url + "cards"
     login = base_url + "login"
     kaduans = base_url + "products"
@@ -35,14 +35,14 @@ class yepay:
             self.type = "cards"
             self.searchPlaceholder = "卡号(输后四位也能查)"
             self.searchFormIndex = 6
-            self.balanceCell = "td.el-table_1_column_8.is-center.el-table__cell"
-            self.operatorCell = "td.el-table_1_column_12.is-center.el-table__cell"
+            self.balanceCell = "td.el-table_1_column_7.is-center.el-table__cell"
+            self.operatorCell = "td.el-table_1_column_13.is-center.el-table__cell"
             self.infos = clients
             self.check_infos = check_clients
             self.routes = routes.cards
             self.submitFooterIndex = 2
             self.passwordFooterIndex = 7
-            self.statusCell = "td.el-table_1_column_9.is-center.el-table__cell"
+            self.statusCell = "td.el-table_1_column_8.is-center.el-table__cell"
             self.bindCardSubmitFooterIndex =0
             self.logs = routes.logs
 
